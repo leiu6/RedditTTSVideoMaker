@@ -6,6 +6,29 @@ def get_clip(path):
     return editor.VideoFileClip(path)
 
 
+def superimpose_image(clip, image_path, duration):
+    image_overlay = editor.ImageClip(image_path)\
+        .set_start(0)\
+        .set_duration(duration)\
+        .set_pos("center", "center")
+
+    return editor.CompositeVideoClip([clip, image_overlay])
+
+
+def add_audio(clip, audio_path):
+    audio_clip = editor.AudioFileClip(audio_path)
+
+    clip.audio = editor.CompositeAudioClip([audio_clip])
+
+    return clip
+
+
+def get_audio_length(audio_path):
+    audio_clip = editor.AudioFileClip(audio_path)
+
+    return audio_clip.duration
+
+
 def crop_vertical_and_shorten(clip, start_t, length):
     # Grab only section of the video
     clip = clip.subclip(start_t, length + start_t)
@@ -40,7 +63,7 @@ def get_video_length_seconds(clip):
 
 def get_edited_clip(clip, desired_length):
     total_clip_length = get_video_length_seconds(clip)
-    clip_start_time = random.randint(0, total_clip_length - desired_length)
+    clip_start_time = random.uniform(0, total_clip_length - desired_length)
 
     return crop_vertical_and_shorten(clip, clip_start_time, desired_length)
 
